@@ -1,3 +1,4 @@
+/* ==== Общий фон ==== */
 .sound-gate {
   position: fixed;
   inset: 0;
@@ -7,16 +8,43 @@
   align-items: center;
   justify-content: center;
   padding: 20px;
+  opacity: 0;
+  transition: opacity 0.9s ease, transform 0.9s ease;
+  overflow: hidden;
+}
+
+.sound-gate.mounted {
   opacity: 1;
-  transition: opacity 0.6s ease;
 }
 
 .sound-gate.fading {
   opacity: 0;
   pointer-events: none;
+  transform: scale(1.04);
+  filter: blur(6px);
 }
 
+/* ==== Мягкое свечение сзади ==== */
+.sound-gate-bg-glow {
+  position: absolute;
+  inset: -20%;
+  background: radial-gradient(
+    circle at 50% 45%,
+    rgba(255, 255, 255, 0.08) 0%,
+    transparent 55%
+  );
+  pointer-events: none;
+  animation: bgBreath 6s ease-in-out infinite;
+}
+
+@keyframes bgBreath {
+  0%, 100% { opacity: 0.6; transform: scale(1); }
+  50%      { opacity: 1;   transform: scale(1.08); }
+}
+
+/* ==== Контент ==== */
 .sound-gate-content {
+  position: relative;
   max-width: 420px;
   width: 100%;
   display: flex;
@@ -24,67 +52,106 @@
   align-items: center;
   gap: 20px;
   text-align: center;
+  z-index: 2;
 }
 
+/* Поэтапное появление элементов */
+.sound-gate-title,
+.sound-gate-eye-wrap,
+.sound-gate-text,
+.sound-gate-buttons,
+.sound-gate-hint {
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+
+.sound-gate.mounted .sound-gate-title     { opacity: 1; transform: translateY(0); transition-delay: 0.15s; }
+.sound-gate.mounted .sound-gate-eye-wrap  { opacity: 1; transform: translateY(0); transition-delay: 0.35s; }
+.sound-gate.mounted .sound-gate-text      { opacity: 1; transform: translateY(0); transition-delay: 0.55s; }
+.sound-gate.mounted .sound-gate-buttons   { opacity: 1; transform: translateY(0); transition-delay: 0.75s; }
+.sound-gate.mounted .sound-gate-hint      { opacity: 1; transform: translateY(0); transition-delay: 0.95s; }
+
+/* ==== Заголовок ==== */
 .sound-gate-title {
   font-size: 22px;
   letter-spacing: 6px;
   font-weight: 700;
   text-shadow: 0 0 15px #fff, 0 0 30px #fff;
-  animation: pulse 3s infinite;
-  margin-bottom: 8px;
+  animation: titlePulse 3.2s ease-in-out infinite;
+  margin-bottom: 4px;
 }
 
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.7; }
+@keyframes titlePulse {
+  0%, 100% { opacity: 1; text-shadow: 0 0 15px #fff, 0 0 30px #fff; }
+  50%      { opacity: 0.85; text-shadow: 0 0 25px #fff, 0 0 50px #fff; }
 }
 
-/* Маленький глаз-превью по центру */
+/* ==== Глаз ==== */
+.sound-gate-eye-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 6px 0;
+}
+
 .sound-gate-eye {
   width: 140px;
   height: 140px;
   border-radius: 50%;
-  background: #fff;
+  background: radial-gradient(circle at 40% 35%, #ffffff, #c0c0c0 70%, #808080);
   display: flex;
   align-items: center;
   justify-content: center;
   box-shadow:
-    0 0 40px #fff,
-    0 0 80px rgba(255, 255, 255, 0.4),
+    0 0 40px rgba(255, 255, 255, 0.9),
+    0 0 80px rgba(255, 255, 255, 0.35),
     inset 0 0 25px rgba(0, 0, 0, 0.5);
-  animation: eyeFloat 3s ease-in-out infinite;
-  margin: 12px 0;
+  /* Плавное парение */
+  animation: eyeFloat 4.5s ease-in-out infinite;
+  will-change: transform;
 }
 
 @keyframes eyeFloat {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-6px); }
+  0%, 100% { transform: translateY(0)     scale(1); }
+  50%      { transform: translateY(-10px) scale(1.015); }
 }
 
 .sound-gate-eye-inner {
+  position: relative;
   width: 90px;
   height: 90px;
   border-radius: 50%;
   background: radial-gradient(circle at 35% 35%, #4a4a4a, #000 75%);
-  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.6s ease;
+  /* Внутренний пульс — дышит */
+  animation: irisBreath 4.5s ease-in-out infinite;
 }
 
-.sound-gate-eye-inner::after {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+@keyframes irisBreath {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.06); }
+}
+
+.sound-gate-pupil {
   width: 32px;
   height: 32px;
   border-radius: 50%;
   background: #000;
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.9);
+  animation: pupilPulse 4.5s ease-in-out infinite;
 }
 
-.sound-gate-eye-inner::before {
-  content: '';
+@keyframes pupilPulse {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(0.92); }
+}
+
+.sound-gate-glint {
   position: absolute;
   top: 18px;
   left: 24px;
@@ -96,12 +163,37 @@
   z-index: 2;
 }
 
+/* Внешнее вращающееся кольцо вокруг глаза */
+.sound-gate-eye-ring {
+  position: absolute;
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  border: 1px dashed rgba(255, 255, 255, 0.35);
+  pointer-events: none;
+  animation: ringRotate 22s linear infinite;
+}
+
+@keyframes ringRotate {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* ==== Текст ==== */
 .sound-gate-text {
   font-size: 12px;
   letter-spacing: 2px;
   opacity: 0.75;
   line-height: 1.6;
   margin: 4px 0 8px;
+}
+
+/* ==== Кнопки ==== */
+.sound-gate-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
 }
 
 .sound-gate-btn {
@@ -112,28 +204,35 @@
   letter-spacing: 3px;
   font-size: 13px;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.28s ease;
   border: 2px solid #fff;
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
+  position: relative;
+  overflow: hidden;
 }
 
 .sound-gate-btn-primary {
   background: #fff;
   color: #000;
   box-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
-  animation: primaryGlow 2.5s ease-in-out infinite;
+  animation: primaryGlow 2.6s ease-in-out infinite;
 }
 
 .sound-gate-btn-primary:hover {
   background: #000;
   color: #fff;
   box-shadow: 0 0 40px #fff;
+  transform: translateY(-2px);
+}
+
+.sound-gate-btn-primary:active {
+  transform: translateY(0) scale(0.98);
 }
 
 @keyframes primaryGlow {
   0%, 100% { box-shadow: 0 0 15px rgba(255, 255, 255, 0.4); }
-  50%      { box-shadow: 0 0 35px rgba(255, 255, 255, 0.8); }
+  50%      { box-shadow: 0 0 35px rgba(255, 255, 255, 0.85); }
 }
 
 .sound-gate-btn-secondary {
@@ -148,8 +247,14 @@
 .sound-gate-btn-secondary:hover {
   color: #fff;
   border-color: #fff;
+  transform: translateY(-1px);
 }
 
+.sound-gate-btn-secondary:active {
+  transform: translateY(0) scale(0.98);
+}
+
+/* ==== Подсказка ==== */
 .sound-gate-hint {
   font-size: 10px;
   letter-spacing: 1.5px;
@@ -158,7 +263,7 @@
   line-height: 1.5;
 }
 
-/* Мобилка */
+/* ==== Мобилка ==== */
 @media (max-width: 500px) {
   .sound-gate-title {
     font-size: 16px;
@@ -175,16 +280,21 @@
     height: 72px;
   }
 
-  .sound-gate-eye-inner::after {
+  .sound-gate-pupil {
     width: 26px;
     height: 26px;
   }
 
-  .sound-gate-eye-inner::before {
+  .sound-gate-glint {
     top: 14px;
     left: 20px;
     width: 10px;
     height: 10px;
+  }
+
+  .sound-gate-eye-ring {
+    width: 145px;
+    height: 145px;
   }
 
   .sound-gate-btn {
