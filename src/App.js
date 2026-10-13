@@ -156,26 +156,51 @@ function App() {
 
   // ==== Клик ====
   const handleBallClick = () => {
-    bumpCombo();
-    const comboMultiplier = Math.min(1 + combo * 0.01, 2);
-    const isCrit = Math.random() < effectiveCritChance;
-    const critMultiplier = isCrit ? 5 : 1;
-    const gain = Math.floor(effectiveClickPower * comboMultiplier * critMultiplier * prestigeMultiplier * daily.multiplier);
+  bumpCombo();
+  const comboMultiplier = Math.min(1 + combo * 0.01, 2);
+  const isCrit = Math.random() < effectiveCritChance;
+  const critMultiplier = isCrit ? 5 : 1;
+  const gain = Math.floor(effectiveClickPower * comboMultiplier * critMultiplier * prestigeMultiplier * daily.multiplier);
 
-    setPoints((p) => p + gain);
-    setTotalPoints((t) => t + gain);
-    setTotalClicks((c) => c + 1);
-    if (isCrit) setTotalCrits((c) => c + 1);
+  setPoints((p) => p + gain);
+  setTotalPoints((t) => t + gain);
+  setTotalClicks((c) => c + 1);
 
-    sound.click();
-    if (isCrit) {
+  if (isCrit) {
+    // Увеличиваем счётчик критов
+    const newCrits = totalCrits + 1;
+    setTotalCrits(newCrits);
+
+    // Показываем тост только на 1-м и каждом 10-м крите
+    if (newCrits === 1) {
       sound.crit();
       speak(PET_PHRASES.onCrit);
-      pushToast({ icon: '✨', title: `КРИТ! +${gain}`, desc: 'x5 урона', type: 'crit' });
-    } else if (Math.random() < 0.05) {
+      pushToast({
+        icon: '✨',
+        title: `ПЕРВЫЙ КРИТ!`,
+        desc: `+${gain} · ×5 урона`,
+        type: 'crit',
+      });
+    } else if (newCrits % 10 === 0) {
+      sound.crit();
+      speak(PET_PHRASES.onCrit);
+      pushToast({
+        icon: '💀',
+        title: `${newCrits} КРИТОВ!`,
+        desc: `+${gain} · ×5 урона`,
+        type: 'crit',
+      });
+    } else {
+      // Обычный крит — только звук, без тоста
+      sound.crit();
+    }
+  } else {
+    sound.click();
+    if (Math.random() < 0.05) {
       speak(PET_PHRASES.onIdleClick);
     }
-  };
+  }
+};
 
   // ==== Прокачка клика ====
   const upgradeClick = () => {
