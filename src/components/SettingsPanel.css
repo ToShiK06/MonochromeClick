@@ -1,0 +1,106 @@
+.settings-section {
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  padding: 12px;
+  margin-bottom: 12px;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.settings-label {
+  font-size: 12px;
+  letter-spacing: 2px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.settings-status {
+  font-size: 10px;
+  padding: 2px 8px;
+  border: 1px solid currentColor;
+  letter-spacing: 1px;
+}
+
+.settings-status.on {
+  color: #fff;
+  text-shadow: 0 0 8px #fff;
+}
+
+.settings-status.off {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.settings-btn {
+  width: 100%;
+  padding: 10px;
+  background: #fff;
+  color: #000;
+  border: 2px solid #fff;
+  font-family: inherit;
+  font-weight: 700;
+  letter-spacing: 2px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.15s;
+  margin-bottom: 10px;
+}
+
+.settings-btn:hover {
+  background: #000;
+  color: #fff;
+  box-shadow: 0 0 20px #fff;
+}
+
+.settings-btn.active {
+  background: #fff;
+  color: #000;
+}
+
+.volume-control {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.volume-label {
+  font-size: 10px;
+  letter-spacing: 2px;
+  opacity: 0.8;
+}
+
+.volume-slider {
+  width: 100%;
+  height: 6px;
+  -webkit-appearance: none;
+  appearance: none;
+  background: rgba(255, 255, 255, 0.2);
+  outline: none;
+  cursor: pointer;
+}
+
+.volume-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  background: #fff;
+  cursor: pointer;
+  box-shadow: 0 0 10px #fff;
+}
+
+.volume-slider::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  background: #fff;
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 0 10px #fff;
+}
+
+.settings-hint {
+  font-size: 11px;
+  line-height: 1.5;
+  opacity: 0.7;
+  margin-top: 4px;
+}

@@ -13,7 +13,7 @@ import SkinSelector from './components/SkinSelector';
 import FishingGame from './components/FishingGame';
 import StatsPanel from './components/StatsPanel';
 import DailyBonus from './components/DailyBonus';
-import AmbientToggle from './components/AmbientToggle';
+import SettingsPanel from './components/SettingsPanel';
 import Weather from './components/Weather';
 
 import { useLocalStorage } from './hooks/useLocalStorage';
@@ -29,7 +29,7 @@ import { SHOP_ITEMS, getShopCost } from './data/shopItems';
 import { SKINS } from './data/skins';
 import { PET_PHRASES, pickRandom } from './data/petPhrases';
 
-// Мета-данные табов — чтобы удобно рендерить и в drawer, и в bottom-панели
+// Мета-данные табов
 const TABS = [
   { id: 'upgrades', icon: '⚡', label: 'КЛИК' },
   { id: 'pet',      icon: '🐾', label: 'ПИТОМЕЦ' },
@@ -39,6 +39,7 @@ const TABS = [
   { id: 'stats',    icon: '📊', label: 'СТАТИСТИКА' },
   { id: 'ach',      icon: '🏆', label: 'ДОСТИЖЕНИЯ' },
   { id: 'prestige', icon: '⟳',  label: 'ПРЕСТИЖ' },
+  { id: 'settings', icon: '⚙️', label: 'НАСТРОЙКИ' },
 ];
 
 function App() {
@@ -80,6 +81,31 @@ function App() {
   const stats = useStats(totalPoints);
   const { weather, timeOfDay } = useWeather();
 
+  // ==== Автозапуск фонового звука при первом взаимодействии ====
+  useEffect(() => {
+    if (!ambient.enabled) return;
+    let started = false;
+
+    const startAmbient = () => {
+      if (started) return;
+      started = true;
+      ambient.start();
+      window.removeEventListener('click', startAmbient);
+      window.removeEventListener('touchstart', startAmbient);
+      window.removeEventListener('keydown', startAmbient);
+    };
+
+    window.addEventListener('click', startAmbient);
+    window.addEventListener('touchstart', startAmbient);
+    window.addEventListener('keydown', startAmbient);
+
+    return () => {
+      window.removeEventListener('click', startAmbient);
+      window.removeEventListener('touchstart', startAmbient);
+      window.removeEventListener('keydown', startAmbient);
+    };
+  }, [ambient.enabled]);
+
   // ==== Стоимости ====
   const getClickUpgradeCost = () => Math.floor(10 * Math.pow(1.6, clickLevel - 1));
   const getPetFeedCost = () => Math.floor(5 * Math.pow(1.4, pet.level - 1));
@@ -103,15 +129,15 @@ function App() {
 
   // ==== Автоклик ====
   useEffect(() => {
-  if (effectiveAutoClick <= 0) return;
-  const interval = setInterval(() => {
-    const gain = Math.floor(effectiveAutoClick * effectiveAutoMultiplier);
-    setPoints((p) => p + gain);
-    setTotalPoints((t) => t + gain);
-  }, 1000);
-  return () => clearInterval(interval);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-}, [effectiveAutoClick, effectiveAutoMultiplier]);
+    if (effectiveAutoClick <= 0) return;
+    const interval = setInterval(() => {
+      const gain = Math.floor(effectiveAutoClick * effectiveAutoMultiplier);
+      setPoints((p) => p + gain);
+      setTotalPoints((t) => t + gain);
+    }, 1000);
+    return () => clearInterval(interval);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [effectiveAutoClick, effectiveAutoMultiplier]);
 
   // ==== Playtime ====
   useEffect(() => {
@@ -141,6 +167,7 @@ function App() {
       if (Math.random() < 0.5) speak(PET_PHRASES.randomIdle);
     }, 30000);
     return () => clearInterval(i);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [eyeSleeping]);
 
   // ==== Комбо ====
@@ -156,51 +183,48 @@ function App() {
 
   // ==== Клик ====
   const handleBallClick = () => {
-  bumpCombo();
-  const comboMultiplier = Math.min(1 + combo * 0.01, 2);
-  const isCrit = Math.random() < effectiveCritChance;
-  const critMultiplier = isCrit ? 5 : 1;
-  const gain = Math.floor(effectiveClickPower * comboMultiplier * critMultiplier * prestigeMultiplier * daily.multiplier);
+    bumpCombo();
+    const comboMultiplier = Math.min(1 + combo * 0.01, 2);
+    const isCrit = Math.random() < effectiveCritChance;
+    const critMultiplier = isCrit ? 5 : 1;
+    const gain = Math.floor(effectiveClickPower * comboMultiplier * critMultiplier * prestigeMultiplier * daily.multiplier);
 
-  setPoints((p) => p + gain);
-  setTotalPoints((t) => t + gain);
-  setTotalClicks((c) => c + 1);
+    setPoints((p) => p + gain);
+    setTotalPoints((t) => t + gain);
+    setTotalClicks((c) => c + 1);
 
-  if (isCrit) {
-    // Увеличиваем счётчик критов
-    const newCrits = totalCrits + 1;
-    setTotalCrits(newCrits);
+    if (isCrit) {
+      const newCrits = totalCrits + 1;
+      setTotalCrits(newCrits);
 
-    // Показываем тост только на 1-м и каждом 10-м крите
-    if (newCrits === 1) {
-      sound.crit();
-      speak(PET_PHRASES.onCrit);
-      pushToast({
-        icon: '✨',
-        title: `ПЕРВЫЙ КРИТ!`,
-        desc: `+${gain} · ×5 урона`,
-        type: 'crit',
-      });
-    } else if (newCrits % 10 === 0) {
-      sound.crit();
-      speak(PET_PHRASES.onCrit);
-      pushToast({
-        icon: '💀',
-        title: `${newCrits} КРИТОВ!`,
-        desc: `+${gain} · ×5 урона`,
-        type: 'crit',
-      });
+      if (newCrits === 1) {
+        sound.crit();
+        speak(PET_PHRASES.onCrit);
+        pushToast({
+          icon: '✨',
+          title: `ПЕРВЫЙ КРИТ!`,
+          desc: `+${gain} · ×5 урона`,
+          type: 'crit',
+        });
+      } else if (newCrits % 10 === 0) {
+        sound.crit();
+        speak(PET_PHRASES.onCrit);
+        pushToast({
+          icon: '💀',
+          title: `${newCrits} КРИТОВ!`,
+          desc: `+${gain} · ×5 урона`,
+          type: 'crit',
+        });
+      } else {
+        sound.crit();
+      }
     } else {
-      // Обычный крит — только звук, без тоста
-      sound.crit();
+      sound.click();
+      if (Math.random() < 0.05) {
+        speak(PET_PHRASES.onIdleClick);
+      }
     }
-  } else {
-    sound.click();
-    if (Math.random() < 0.05) {
-      speak(PET_PHRASES.onIdleClick);
-    }
-  }
-};
+  };
 
   // ==== Прокачка клика ====
   const upgradeClick = () => {
@@ -333,6 +357,8 @@ function App() {
         return <Achievements unlocked={achievements} />;
       case 'prestige':
         return <PrestigePanel totalPoints={totalPoints} prestige={prestige} onPrestige={doPrestige} />;
+      case 'settings':
+        return <SettingsPanel ambient={ambient} sound={sound} />;
       default:
         return null;
     }
@@ -341,7 +367,7 @@ function App() {
   // Обработчик выбора таба
   const handleTabSelect = (id) => {
     setActiveTab(id);
-    setMobileMenuOpen(false); // авто-закрытие на мобилке
+    setMobileMenuOpen(false);
   };
 
   return (
@@ -351,10 +377,8 @@ function App() {
       <div className="scanlines"></div>
 
       <Toast toasts={toasts} onRemove={removeToast} />
-      <AmbientToggle enabled={ambient.enabled} onToggle={ambient.toggle} />
 
       <header className="header">
-        {/* Бургер — только на мобилке */}
         <button
           className="burger-btn"
           onClick={() => setMobileMenuOpen(true)}
@@ -382,7 +406,6 @@ function App() {
       </header>
 
       <main className="game-area">
-        {/* ЛЕВАЯ ПАНЕЛЬ — только десктоп */}
         <aside className="panel-left">
           <DailyBonus daily={daily} onClaim={() => {
             daily.claim();
@@ -406,7 +429,6 @@ function App() {
           </div>
         </aside>
 
-        {/* ЦЕНТР: питомец + глаз */}
         <section className="center-stage">
           <div className="pet-wrap">
             <PetBubble text={petSpeech} />
@@ -420,14 +442,12 @@ function App() {
             skin={currentSkin}
           />
 
-          {/* МОБИЛЬНАЯ ПАНЕЛЬ КОНТЕНТА — внизу под глазом */}
           <div className="mobile-content">
             {renderTabContent()}
           </div>
         </section>
       </main>
 
-      {/* МОБИЛЬНОЕ МЕНЮ — выезжающая панель */}
       <div
         className={`mobile-drawer-overlay ${mobileMenuOpen ? 'open' : ''}`}
         onClick={() => setMobileMenuOpen(false)}

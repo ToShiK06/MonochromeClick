@@ -1,14 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 
-/**
- * Жуткий ночной эмбиент:
- * - Громкие сверчки (трели с разной высотой)
- * - Низкий гул-drone (тревожный)
- * - Ветер (фильтрованный шум)
- * - Редкие криповые акценты: скрип, вой, шёпот, стук сердца
- */
 export function useAmbient() {
-  const [enabled, setEnabled] = useState(false);
+  const [enabled, setEnabled] = useState(true); // 🔊 по умолчанию ВКЛ
+  const [volume, setVolumeState] = useState(0.45);
   const ctxRef = useRef(null);
   const masterRef = useRef(null);
   const cricketTimerRef = useRef(null);
@@ -24,26 +18,25 @@ export function useAmbient() {
     await ctx.resume();
     ctxRef.current = ctx;
 
-    // ==== Мастер-громкость (громче чем было) ====
     const master = ctx.createGain();
-    master.gain.value = 0.45; // было 0.15
+    master.gain.value = volume;
     master.connect(ctx.destination);
     masterRef.current = master;
 
-    // ==== Drone: глубокий гул (две расстроенные низкие волны) ====
+    // ==== Drone ====
     const droneGain = ctx.createGain();
     droneGain.gain.value = 0.18;
     droneGain.connect(master);
 
     const drone1 = ctx.createOscillator();
     drone1.type = 'sine';
-    drone1.frequency.value = 47; // чуть ниже A1, тревожнее
+    drone1.frequency.value = 47;
     const drone2 = ctx.createOscillator();
     drone2.type = 'sine';
     drone2.frequency.value = 47 * 1.007;
     const drone3 = ctx.createOscillator();
     drone3.type = 'triangle';
-    drone3.frequency.value = 94; // октава выше, еле слышимая
+    drone3.frequency.value = 94;
 
     const droneFilter = ctx.createBiquadFilter();
     droneFilter.type = 'lowpass';
@@ -58,7 +51,7 @@ export function useAmbient() {
     drone3.start();
     droneRefs.current.push(drone1, drone2, drone3);
 
-    // ==== Шум "ветра" (белый шум через фильтр) ====
+    // ==== Ветер ====
     const bufferSize = 2 * ctx.sampleRate;
     const noiseBuffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
     const data = noiseBuffer.getChannelData(0);
@@ -73,7 +66,6 @@ export function useAmbient() {
     const noiseGain = ctx.createGain();
     noiseGain.gain.value = 0.12;
 
-    // LFO для "дыхания" ветра
     const lfo = ctx.createOscillator();
     lfo.frequency.value = 0.12;
     const lfoGain = ctx.createGain();
@@ -88,7 +80,7 @@ export function useAmbient() {
     noise.start();
     droneRefs.current.push(noise, lfo);
 
-    // ==== СВЕРЧКИ (громче, злее) ====
+    // ==== Сверчки ====
     const playCricketChirp = () => {
       if (!ctxRef.current) return;
       const c = ctxRef.current;
@@ -97,7 +89,7 @@ export function useAmbient() {
       const pulseGap = 0.035 + Math.random() * 0.03;
 
       const chirpGain = c.createGain();
-      chirpGain.gain.value = 0.08 + Math.random() * 0.06; // было 0.02–0.04
+      chirpGain.gain.value = 0.08 + Math.random() * 0.06;
       chirpGain.connect(masterRef.current);
 
       for (let i = 0; i < pulses; i++) {
@@ -118,7 +110,7 @@ export function useAmbient() {
 
     const scheduleCricket = () => {
       if (!ctxRef.current) return;
-      const delay = 150 + Math.random() * 900; // чаще, чем было
+      const delay = 150 + Math.random() * 900;
       cricketTimerRef.current = setTimeout(() => {
         if (Math.random() < 0.4) {
           playCricketChirp();
@@ -131,9 +123,8 @@ export function useAmbient() {
     };
     scheduleCricket();
 
-    // ==== КРИПОВЫЕ АКЦЕНТЫ ====
+    // ==== Криповые акценты ====
     const playCreak = () => {
-      // Скрип дерева: пила с медленной модуляцией
       const c = ctxRef.current;
       const osc = c.createOscillator();
       osc.type = 'sawtooth';
@@ -155,7 +146,6 @@ export function useAmbient() {
     };
 
     const playWhisper = () => {
-      // Шёпот: шум через узкий фильтр с модуляцией
       const c = ctxRef.current;
       const bufSize = c.sampleRate * 1.5;
       const buf = c.createBuffer(1, bufSize, c.sampleRate);
@@ -180,7 +170,6 @@ export function useAmbient() {
     };
 
     const playHeartbeat = () => {
-      // Двойной удар сердца
       const c = ctxRef.current;
       const beat = (t, vol) => {
         const osc = c.createOscillator();
@@ -201,7 +190,6 @@ export function useAmbient() {
     };
 
     const playHowl = () => {
-      // Далёкий вой: пила с медленным вибрато
       const c = ctxRef.current;
       const osc = c.createOscillator();
       osc.type = 'sawtooth';
@@ -235,7 +223,7 @@ export function useAmbient() {
 
     const scheduleAccent = () => {
       if (!ctxRef.current) return;
-      const delay = 4000 + Math.random() * 9000; // каждые 4–13 сек
+      const delay = 4000 + Math.random() * 9000;
       accentTimerRef.current = setTimeout(() => {
         const fn = accentPool[Math.floor(Math.random() * accentPool.length)];
         fn();
@@ -243,8 +231,6 @@ export function useAmbient() {
       }, delay);
     };
     scheduleAccent();
-
-    setEnabled(true);
   };
 
   const stop = () => {
@@ -263,14 +249,29 @@ export function useAmbient() {
       ctxRef.current = null;
     }
     masterRef.current = null;
-    setEnabled(false);
   };
 
-  const toggle = () => (enabled ? stop() : start());
+  // Публичное управление
+  const toggle = () => {
+    if (enabled) {
+      stop();
+      setEnabled(false);
+    } else {
+      start();
+      setEnabled(true);
+    }
+  };
+
+  const setVolume = (v) => {
+    setVolumeState(v);
+    if (masterRef.current) {
+      masterRef.current.gain.value = v;
+    }
+  };
 
   useEffect(() => {
     return () => stop();
   }, []);
 
-  return { enabled, start, stop, toggle };
+  return { enabled, start, stop, toggle, volume, setVolume };
 }
