@@ -1,0 +1,73 @@
+.pet-card {
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.03);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.pet-name {
+  font-size: 16px;
+  letter-spacing: 3px;
+  font-weight: 700;
+  text-align: center;
+  text-shadow: 0 0 10px #fff;
+}
+
+.pet-stage {
+  font-size: 10px;
+  text-align: center;
+  letter-spacing: 3px;
+  opacity: 0.6;
+}
+
+.pet-level-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  letter-spacing: 2px;
+  padding-top: 6px;
+  border-top: 1px dashed rgba(255, 255, 255, 0.3);
+}
+
+.pet-level {
+  font-size: 14px;
+  font-weight: 700;
+  text-shadow: 0 0 8px #fff;
+}
+
+.xp-bar-wrapper {
+  position: relative;
+  height: 20px;
+  border: 1px solid #fff;
+  background: #000;
+  overflow: hidden;
+}
+
+.xp-bar {
+  height: 100%;
+  background: #fff;
+  transition: width 0.3s ease;
+  box-shadow: 0 0 10px #fff;
+}
+
+.xp-text {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  letter-spacing: 1px;
+  color: #fff;
+  mix-blend-mode: difference;
+  font-weight: 700;
+}
+
+.pet-bonus {
+  font-size: 11px;
+  text-align: center;
+  letter-spacing: 1px;
+  opacity: 0.8;
+}

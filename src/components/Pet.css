@@ -1,0 +1,86 @@
+.pet-display {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 3;
+  pointer-events: none;
+  line-height: 1;
+}
+
+.pet-sprite {
+  font-size: 56px;
+  filter: grayscale(1) brightness(2);
+  animation: petFloat 2.5s ease-in-out infinite;
+  text-shadow: 0 0 20px #fff;
+}
+
+@keyframes petFloat {
+  0%, 100% { transform: translateY(0) rotate(-3deg); }
+  50% { transform: translateY(-12px) rotate(3deg); }
+}
+
+.pet-shadow {
+  width: 40px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  margin-top: 4px;
+  animation: shadowPulse 2.5s ease-in-out infinite;
+}
+
+@keyframes shadowPulse {
+  0%, 100% { transform: scaleX(1); opacity: 0.4; }
+  50% { transform: scaleX(0.7); opacity: 0.2; }
+}
+
+.pet-label {
+  margin-top: 6px;
+  font-size: 10px;
+  letter-spacing: 3px;
+  opacity: 0.6;
+  text-shadow: 0 0 8px #fff;
+}
+
+.pet-teen .pet-sprite {
+  font-size: 66px;
+}
+
+.pet-adult .pet-sprite {
+  font-size: 78px;
+  filter: grayscale(1) brightness(2.5) drop-shadow(0 0 20px #fff);
+}
+
+/* Замедление парения во сне */
+.pet-display.sleeping .pet-sprite {
+  animation-duration: 5s;
+  filter: grayscale(1) brightness(1.2) blur(0.3px);
+  opacity: 0.8;
+}
+
+.pet-display.sleeping .pet-shadow {
+  animation-duration: 5s;
+}
+
+/* Метка сна мерцает */
+.pet-display.sleeping .pet-label {
+  opacity: 0.4;
+}
+@media (max-width: 900px) {
+  .pet-sprite {
+    font-size: 40px;
+  }
+  .pet-teen .pet-sprite {
+    font-size: 48px;
+  }
+  .pet-adult .pet-sprite {
+    font-size: 56px;
+  }
+  .pet-shadow {
+    width: 30px;
+  }
+  .pet-label {
+    font-size: 9px;
+    letter-spacing: 2px;
+  }
+}

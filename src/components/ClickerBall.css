@@ -1,0 +1,330 @@
+.ball-wrapper {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 20px;
+}
+
+/* Аура — тускнеет во сне */
+.ball-aura {
+  position: absolute;
+  width: 340px;
+  height: 340px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 70%);
+  animation: auraPulse 3s ease-in-out infinite;
+  pointer-events: none;
+  transition: opacity 0.6s ease, filter 0.6s ease;
+}
+
+.ball-aura.sleepy {
+  animation-duration: 5s;
+  opacity: 0.4;
+  filter: blur(2px);
+}
+
+@keyframes auraPulse {
+  0%, 100% { transform: scale(1); opacity: 0.6; }
+  50% { transform: scale(1.15); opacity: 1; }
+}
+
+/* ==== ШАР ==== */
+.ball {
+  position: relative;
+  width: 240px;
+  height: 240px;
+  border-radius: 50%;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow:
+    0 0 40px #fff,
+    0 0 80px rgba(255, 255, 255, 0.5),
+    inset 0 0 30px rgba(0, 0, 0, 0.5);
+  transition: transform 0.1s ease, box-shadow 0.4s ease, filter 0.4s ease;
+  overflow: hidden;
+}
+
+.ball:hover {
+  box-shadow:
+    0 0 60px #fff,
+    0 0 120px rgba(255, 255, 255, 0.8),
+    inset 0 0 30px rgba(0, 0, 0, 0.5);
+}
+
+/* Во сне — приглушённый, чуть меньше */
+.ball.sleeping {
+  box-shadow:
+    0 0 20px rgba(255, 255, 255, 0.4),
+    0 0 40px rgba(255, 255, 255, 0.2),
+    inset 0 0 30px rgba(0, 0, 0, 0.6);
+  filter: brightness(0.75);
+  transform: scale(0.96);
+}
+
+.ball-wrapper:active .ball {
+  transform: scale(0.96);
+}
+
+/* Белок глаза */
+.eye-white {
+  position: relative;
+  width: 190px;
+  height: 190px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 40% 35%, #ffffff, #c0c0c0 70%, #808080);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: inset 0 0 25px rgba(0, 0, 0, 0.4);
+  overflow: hidden;
+  transition: transform 0.08s ease-out;
+}
+
+.eye-white.blinking,
+.eye-white.sleeping {
+  transform: scaleY(0.05);
+}
+
+/* Радужка */
+/* Радужка — цвет приходит из inline-style (скин) */
+.eye-iris {
+  position: relative;
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  will-change: transform;
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Зрачок — с пульсом через CSS-переменную */
+.eye-pupil {
+  position: relative;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #000;
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.9);
+  /* Пульс применяется через scale — не конфликтует с размером */
+  transform: scale(var(--pulse, 1));
+  transition: width 0.15s ease-out, height 0.15s ease-out, border-radius 0.15s ease-out;
+  will-change: transform;
+}
+
+/* Кошачье сужение */
+.eye-pupil.squinting {
+  width: 14px;
+  height: 48px;
+  border-radius: 50% / 40%;
+}
+
+/* Блик */
+.eye-glint {
+  position: absolute;
+  top: 6px;
+  left: 8px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 0 10px #fff;
+  opacity: 0.95;
+  transition: all 0.15s ease-out;
+}
+
+.eye-pupil.squinting .eye-glint {
+  width: 4px;
+  height: 12px;
+  left: 5px;
+  top: 18px;
+  border-radius: 50%;
+}
+
+/* Веко */
+.eye-lid {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: transparent;
+  pointer-events: none;
+  transition: background 0.15s ease-out;
+}
+
+.eye-lid.closed {
+  background: rgba(0, 0, 0, 0.15);
+}
+
+/* Внешнее кольцо */
+.ball-ring {
+  position: absolute;
+  inset: 6px;
+  border-radius: 50%;
+  border: 2px dashed rgba(0, 0, 0, 0.3);
+  animation: ringRotate 15s linear infinite;
+  pointer-events: none;
+}
+
+.ball.sleeping .ball-ring {
+  animation-duration: 40s;
+  opacity: 0.4;
+}
+
+@keyframes ringRotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Всплывающие "+N" */
+.click-pulse {
+  position: absolute;
+  color: #fff;
+  font-weight: 700;
+  font-size: 22px;
+  pointer-events: none;
+  text-shadow: 0 0 10px #fff;
+  transform: translate(-50%, -50%);
+  animation: floatUp 0.8s ease-out forwards;
+}
+
+@keyframes floatUp {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(0.8);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -180%) scale(1.4);
+  }
+}
+
+.ball-hint {
+  margin-top: 40px;
+  font-size: 12px;
+  letter-spacing: 4px;
+  opacity: 0.5;
+  transition: opacity 0.3s;
+}
+
+/* ==== ZZZ над глазом ==== */
+.zzz {
+  position: absolute;
+  top: 30px;
+  right: 80px;
+  pointer-events: none;
+}
+
+.z {
+  position: absolute;
+  font-family: 'Courier New', monospace;
+  font-weight: 700;
+  color: #fff;
+  text-shadow: 0 0 10px #fff;
+  opacity: 0;
+}
+
+.z1 {
+  font-size: 22px;
+  animation: floatZ 3s ease-out infinite;
+}
+
+.z2 {
+  font-size: 18px;
+  animation: floatZ 3s ease-out 1s infinite;
+}
+
+.z3 {
+  font-size: 14px;
+  animation: floatZ 3s ease-out 2s infinite;
+}
+
+@keyframes floatZ {
+  0% {
+    transform: translate(0, 0) rotate(-10deg);
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate(50px, -60px) rotate(15deg);
+    opacity: 0;
+  }
+}
+
+/* Адаптив */
+@media (max-width: 900px) {
+  .ball { width: 180px; height: 180px; }
+  .eye-white { width: 140px; height: 140px; }
+  .eye-iris { width: 80px; height: 80px; }
+  .eye-pupil { width: 34px; height: 34px; }
+  .eye-pupil.squinting { width: 10px; height: 34px; }
+  .ball-aura { width: 260px; height: 260px; }
+  .zzz { top: 20px; right: 40px; }
+}
+
+/* ====== Hover: зрачок чуть больше, шар чуть светится ====== */
+.ball-wrapper.hovering .ball {
+  box-shadow:
+    0 0 70px #fff,
+    0 0 140px rgba(255, 255, 255, 0.85),
+    inset 0 0 30px rgba(0, 0, 0, 0.5);
+}
+
+.ball-wrapper.hovering .ball-ring {
+  animation-duration: 6s;
+  border-color: rgba(0, 0, 0, 0.6);
+}
+
+/* ====== Зевание: глаз расширяется, потом сжимается ====== */
+.eye-white.yawning {
+  animation: yawnStretch 1.5s ease-in-out;
+}
+
+@keyframes yawnStretch {
+  0%   { transform: scaleY(1) scaleX(1); }
+  15%  { transform: scaleY(1.08) scaleX(0.98); }
+  50%  { transform: scaleY(1.05) scaleX(1); }
+  80%  { transform: scaleY(0.1) scaleX(1.1); }
+  100% { transform: scaleY(1) scaleX(1); }
+}
+
+/* ====== Сновидения ====== */
+.dream-bubble {
+  position: absolute;
+  top: 20px;
+  right: 60px;
+  pointer-events: none;
+  animation: dreamFloat 2.5s ease-out forwards;
+}
+
+.dream-icon {
+  font-size: 36px;
+  filter: grayscale(1) brightness(2);
+  text-shadow: 0 0 20px #fff;
+}
+
+@keyframes dreamFloat {
+  0% {
+    opacity: 0;
+    transform: translateY(20px) scale(0.6);
+  }
+  20% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  80% {
+    opacity: 1;
+    transform: translateY(-20px) scale(1.05);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-50px) scale(1.2);
+  }
+}

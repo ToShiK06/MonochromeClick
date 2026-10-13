@@ -1,0 +1,62 @@
+.prestige-panel {
+  border: 2px solid #fff;
+  padding: 16px;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  height: 100%;
+}
+
+.prestige-info {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 11px;
+  letter-spacing: 1px;
+}
+
+.prestige-row {
+  display: flex;
+  justify-content: space-between;
+}
+
+.prestige-value {
+  font-size: 16px;
+  font-weight: 700;
+  text-shadow: 0 0 8px #fff;
+}
+
+.prestige-desc,
+.prestige-bonus,
+.prestige-req {
+  opacity: 0.85;
+}
+
+.prestige-bar-wrapper {
+  position: relative;
+  height: 18px;
+  border: 1px solid #fff;
+  background: #000;
+  overflow: hidden;
+  margin-top: 6px;
+}
+
+.prestige-bar {
+  height: 100%;
+  background: #fff;
+  transition: width 0.3s ease;
+  box-shadow: 0 0 10px #fff;
+}
+
+.prestige-bar-text {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: 700;
+  color: #fff;
+  mix-blend-mode: difference;
+}

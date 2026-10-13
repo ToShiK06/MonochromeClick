@@ -1,0 +1,121 @@
+.fishing-game {
+  border: 2px solid #fff;
+  padding: 16px;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.fishing-scene {
+  position: relative;
+  height: 120px;
+  background:
+    linear-gradient(180deg, #000 0%, #000 40%, #111 60%, #000 100%);
+  border: 1px solid rgba(255,255,255,0.3);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.water-surface {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 1px;
+  background: rgba(255,255,255,0.3);
+  animation: waterWave 3s linear infinite;
+}
+
+@keyframes waterWave {
+  0%, 100% { transform: translateX(0); }
+  50%      { transform: translateX(10px); }
+}
+
+.bobber {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 32px;
+  filter: grayscale(1) brightness(2);
+  animation: bobberFloat 2s ease-in-out infinite;
+  z-index: 2;
+}
+
+@keyframes bobberFloat {
+  0%, 100% { transform: translate(-50%, -50%) translateY(0); }
+  50%      { transform: translate(-50%, -50%) translateY(-8px); }
+}
+
+.state-bite .bobber {
+  animation: bobberBite 0.2s ease-in-out infinite;
+}
+
+@keyframes bobberBite {
+  0%, 100% { transform: translate(-50%, -50%) translateY(0) rotate(-10deg); }
+  50%      { transform: translate(-50%, -50%) translateY(6px) rotate(10deg); }
+}
+
+.ripple {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 40px;
+  height: 10px;
+  border-radius: 50%;
+  border: 1px solid #fff;
+  transform: translate(-50%, -50%);
+  animation: rippleAnim 0.8s ease-out infinite;
+}
+
+@keyframes rippleAnim {
+  0%   { width: 30px; height: 8px; opacity: 1; }
+  100% { width: 120px; height: 30px; opacity: 0; }
+}
+
+.fishing-message {
+  text-align: center;
+  font-size: 12px;
+  letter-spacing: 2px;
+  min-height: 18px;
+}
+
+.msg-bite { animation: glow 0.5s infinite alternate; color: #fff; }
+.msg-caught { color: #fff; text-shadow: 0 0 20px #fff; }
+.msg-missed { opacity: 0.5; }
+
+.fishing-btn {
+  padding: 12px;
+  background: #fff;
+  color: #000;
+  border: 2px solid #fff;
+  font-family: inherit;
+  font-weight: 700;
+  letter-spacing: 2px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.fishing-btn:hover:not(.disabled) {
+  background: #000;
+  color: #fff;
+  box-shadow: 0 0 20px #fff;
+}
+
+.fishing-btn.hot {
+  animation: hotPulse 0.3s infinite;
+}
+
+@keyframes hotPulse {
+  0%, 100% { box-shadow: 0 0 10px #fff; transform: scale(1); }
+  50%      { box-shadow: 0 0 30px #fff, 0 0 50px #fff; transform: scale(1.03); }
+}
+
+.fishing-btn.disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}

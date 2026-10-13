@@ -1,0 +1,49 @@
+.ambient-toggle {
+  position: fixed;
+  bottom: 60px;
+  right: 20px;
+  z-index: 100;
+  width: 44px;
+  height: 44px;
+  background: #000;
+  border: 2px solid #fff;
+  color: #fff;
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Courier New', monospace;
+}
+
+.ambient-toggle:hover {
+  background: #fff;
+  color: #000;
+  box-shadow: 0 0 20px #fff;
+}
+
+.ambient-toggle.on {
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+  animation: ambientPulse 4s ease-in-out infinite;
+}
+
+/* Заменяем 🦗 и 🔇 на текст — они точно отрендерятся */
+.ambient-toggle.on::before  { content: '♪'; }
+.ambient-toggle.off::before { content: '✕'; }
+
+@keyframes ambientPulse {
+  0%, 100% { box-shadow: 0 0 10px rgba(255, 255, 255, 0.3); }
+  50%      { box-shadow: 0 0 25px rgba(255, 255, 255, 0.8); }
+}
+
+@media (max-width: 900px) {
+  .ambient-toggle {
+    bottom: 70px;
+    right: 12px;
+    width: 38px;
+    height: 38px;
+    font-size: 18px;
+  }
+}

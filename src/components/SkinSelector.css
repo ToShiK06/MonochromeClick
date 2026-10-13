@@ -1,0 +1,63 @@
+.skin-selector {
+  border: 2px solid #fff;
+  padding: 16px;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.skin-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.skin-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 4px;
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.4);
+  color: #fff;
+  font-family: inherit;
+  font-size: 9px;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+}
+
+.skin-btn:hover:not(.locked) {
+  border-color: #fff;
+  box-shadow: 0 0 10px rgba(255,255,255,0.4);
+}
+
+.skin-btn.selected {
+  border-color: #fff;
+  background: rgba(255,255,255,0.1);
+  box-shadow: 0 0 15px #fff;
+}
+
+.skin-btn.locked {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.skin-preview {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: block;
+}
+
+.skin-name {
+  font-weight: 700;
+}
+
+.skin-lock {
+  font-size: 8px;
+  opacity: 0.9;
+}
