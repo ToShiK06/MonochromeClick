@@ -15,6 +15,7 @@ import StatsPanel from './components/StatsPanel';
 import DailyBonus from './components/DailyBonus';
 import SettingsPanel from './components/SettingsPanel';
 import Weather from './components/Weather';
+import SoundGate from './components/SoundGate';
 
 import { useLocalStorage } from './hooks/useLocalStorage';
 import { useToasts } from './hooks/useToasts';
@@ -68,6 +69,10 @@ function App() {
   const [petSpeech, setPetSpeech] = useState(null);
   const [playtime, setPlaytime] = useState('00:00:00');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [soundGateOpen, setSoundGateOpen] = useState(() => {
+    // Показываем оверлей только если игрок ещё не подтверждал выбор в этой сессии
+    return !sessionStorage.getItem('mc_soundChosen');
+  });
 
   const comboTimerRef = useRef(null);
   const speechTimerRef = useRef(null);
@@ -81,30 +86,18 @@ function App() {
   const stats = useStats(totalPoints);
   const { weather, timeOfDay } = useWeather();
 
-  // ==== Автозапуск фонового звука при первом взаимодействии ====
-  useEffect(() => {
-    if (!ambient.enabled) return;
-    let started = false;
+  // ==== Обработчики SoundGate ====
+  const handleEnterWithSound = () => {
+    ambient.start();
+    sessionStorage.setItem('mc_soundChosen', 'on');
+    setSoundGateOpen(false);
+  };
 
-    const startAmbient = () => {
-      if (started) return;
-      started = true;
-      ambient.start();
-      window.removeEventListener('click', startAmbient);
-      window.removeEventListener('touchstart', startAmbient);
-      window.removeEventListener('keydown', startAmbient);
-    };
-
-    window.addEventListener('click', startAmbient);
-    window.addEventListener('touchstart', startAmbient);
-    window.addEventListener('keydown', startAmbient);
-
-    return () => {
-      window.removeEventListener('click', startAmbient);
-      window.removeEventListener('touchstart', startAmbient);
-      window.removeEventListener('keydown', startAmbient);
-    };  // eslint-disable-next-line react-hooks/exhaustive-deps
-}, [ambient.enabled]);
+  const handleEnterMuted = () => {
+    if (ambient.enabled) ambient.stop();
+    sessionStorage.setItem('mc_soundChosen', 'off');
+    setSoundGateOpen(false);
+  };
 
   // ==== Стоимости ====
   const getClickUpgradeCost = () => Math.floor(10 * Math.pow(1.6, clickLevel - 1));
@@ -372,6 +365,13 @@ function App() {
 
   return (
     <div className={`app ${eyeSleeping ? 'sleeping' : ''} skin-${selectedSkin}`}>
+      {soundGateOpen && (
+        <SoundGate
+          onEnter={handleEnterWithSound}
+          onEnterMuted={handleEnterMuted}
+        />
+      )}
+
       <div className="grid-bg"></div>
       <Weather weather={weather} timeOfDay={timeOfDay} />
       <div className="scanlines"></div>

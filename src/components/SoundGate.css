@@ -1,0 +1,198 @@
+.sound-gate {
+  position: fixed;
+  inset: 0;
+  z-index: 5000;
+  background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  opacity: 1;
+  transition: opacity 0.6s ease;
+}
+
+.sound-gate.fading {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.sound-gate-content {
+  max-width: 420px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  text-align: center;
+}
+
+.sound-gate-title {
+  font-size: 22px;
+  letter-spacing: 6px;
+  font-weight: 700;
+  text-shadow: 0 0 15px #fff, 0 0 30px #fff;
+  animation: pulse 3s infinite;
+  margin-bottom: 8px;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+/* Маленький глаз-превью по центру */
+.sound-gate-eye {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow:
+    0 0 40px #fff,
+    0 0 80px rgba(255, 255, 255, 0.4),
+    inset 0 0 25px rgba(0, 0, 0, 0.5);
+  animation: eyeFloat 3s ease-in-out infinite;
+  margin: 12px 0;
+}
+
+@keyframes eyeFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+.sound-gate-eye-inner {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #4a4a4a, #000 75%);
+  position: relative;
+}
+
+.sound-gate-eye-inner::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #000;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.9);
+}
+
+.sound-gate-eye-inner::before {
+  content: '';
+  position: absolute;
+  top: 18px;
+  left: 24px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 0 10px #fff;
+  z-index: 2;
+}
+
+.sound-gate-text {
+  font-size: 12px;
+  letter-spacing: 2px;
+  opacity: 0.75;
+  line-height: 1.6;
+  margin: 4px 0 8px;
+}
+
+.sound-gate-btn {
+  width: 100%;
+  padding: 14px 20px;
+  font-family: inherit;
+  font-weight: 700;
+  letter-spacing: 3px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: 2px solid #fff;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+.sound-gate-btn-primary {
+  background: #fff;
+  color: #000;
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
+  animation: primaryGlow 2.5s ease-in-out infinite;
+}
+
+.sound-gate-btn-primary:hover {
+  background: #000;
+  color: #fff;
+  box-shadow: 0 0 40px #fff;
+}
+
+@keyframes primaryGlow {
+  0%, 100% { box-shadow: 0 0 15px rgba(255, 255, 255, 0.4); }
+  50%      { box-shadow: 0 0 35px rgba(255, 255, 255, 0.8); }
+}
+
+.sound-gate-btn-secondary {
+  background: transparent;
+  color: rgba(255, 255, 255, 0.65);
+  border-color: rgba(255, 255, 255, 0.35);
+  font-size: 11px;
+  padding: 10px 20px;
+  letter-spacing: 2px;
+}
+
+.sound-gate-btn-secondary:hover {
+  color: #fff;
+  border-color: #fff;
+}
+
+.sound-gate-hint {
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  opacity: 0.45;
+  margin-top: 6px;
+  line-height: 1.5;
+}
+
+/* Мобилка */
+@media (max-width: 500px) {
+  .sound-gate-title {
+    font-size: 16px;
+    letter-spacing: 4px;
+  }
+
+  .sound-gate-eye {
+    width: 110px;
+    height: 110px;
+  }
+
+  .sound-gate-eye-inner {
+    width: 72px;
+    height: 72px;
+  }
+
+  .sound-gate-eye-inner::after {
+    width: 26px;
+    height: 26px;
+  }
+
+  .sound-gate-eye-inner::before {
+    top: 14px;
+    left: 20px;
+    width: 10px;
+    height: 10px;
+  }
+
+  .sound-gate-btn {
+    padding: 12px 16px;
+    font-size: 12px;
+  }
+
+  .sound-gate-text {
+    font-size: 11px;
+  }
+}
