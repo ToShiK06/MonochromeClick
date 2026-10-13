@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+
 
 // Утилита: проверка достижений
 export function checkAchievements({

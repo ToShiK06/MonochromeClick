@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 
 const WEATHERS = ['clear', 'fog', 'rain', 'storm'];
-const TIMES = ['day', 'dusk', 'night', 'dawn'];
 
 export function useWeather() {
   const [weather, setWeather] = useState('clear');

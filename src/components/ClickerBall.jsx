@@ -23,7 +23,6 @@ function ClickerBall({ onClick, clickPower, onSleepChange, combo = 0, skin }) {
   const trembleTimeRef = useRef(0);
   const pulseTimeRef = useRef(0);
   const rafRef = useRef(null);
-  const pupilScaleRef = useRef(1);
 
   const lastMouseMoveRef = useRef(Date.now());
   const lastClickRef = useRef(Date.now());

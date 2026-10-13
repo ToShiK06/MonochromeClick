@@ -103,14 +103,15 @@ function App() {
 
   // ==== Автоклик ====
   useEffect(() => {
-    if (effectiveAutoClick <= 0) return;
-    const interval = setInterval(() => {
-      const gain = Math.floor(effectiveAutoClick * effectiveAutoMultiplier);
-      setPoints((p) => p + gain);
-      setTotalPoints((t) => t + gain);
-    }, 1000);
-    return () => clearInterval(interval);
-  }, [effectiveAutoClick, effectiveAutoMultiplier]);
+  if (effectiveAutoClick <= 0) return;
+  const interval = setInterval(() => {
+    const gain = Math.floor(effectiveAutoClick * effectiveAutoMultiplier);
+    setPoints((p) => p + gain);
+    setTotalPoints((t) => t + gain);
+  }, 1000);
+  return () => clearInterval(interval);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+}, [effectiveAutoClick, effectiveAutoMultiplier]);
 
   // ==== Playtime ====
   useEffect(() => {
@@ -285,6 +286,7 @@ function App() {
         speak(PET_PHRASES.onAchievement);
       },
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [totalClicks, totalPoints, pet.level, clickLevel, maxCombo, totalCrits, achievements]);
 
   // ==== Рендер контента таба ====
