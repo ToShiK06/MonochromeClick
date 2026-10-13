@@ -103,8 +103,8 @@ function App() {
       window.removeEventListener('click', startAmbient);
       window.removeEventListener('touchstart', startAmbient);
       window.removeEventListener('keydown', startAmbient);
-    };
-  }, [ambient.enabled]);
+    };  // eslint-disable-next-line react-hooks/exhaustive-deps
+}, [ambient.enabled]);
 
   // ==== Стоимости ====
   const getClickUpgradeCost = () => Math.floor(10 * Math.pow(1.6, clickLevel - 1));
